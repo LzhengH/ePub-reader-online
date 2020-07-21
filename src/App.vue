@@ -1,8 +1,5 @@
 <template>
   <div id="app">
-    <div id="nav">
-        <span class="test">ABCDE</span>
-    </div>
     <router-view/>
   </div>
 </template>
@@ -20,9 +17,9 @@
   window.addEventListener('resize', recalc, false)
 </script>
 <style lang='scss' scope>
-  @import './assets/styles/global.scss';
-  .test {
-    font-size: px2rem(20);
-    color: red;
+  #app {
+    widows: 100%;
+    height: 100%;
+    overflow: hidden;
   }
 </style>

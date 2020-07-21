@@ -1,7 +1,3 @@
 @import './reset.scss';
-
-$radio: 375 / 10;
-
-@function px2rem($px) {
-  @return $px/$radio + rem;
-}
+@import './mixin.scss';
+@import './transition'

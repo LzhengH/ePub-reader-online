@@ -16,6 +16,8 @@ module.exports = {
     'indent': ['off'],
     'prefer-const': 'off',
     'space-before-function-paren': 'off',
-    'no-undef': 'off'
+    'no-undef': 'off',
+    'quote-props': 'off',
+    'comma-dangle': 'off'
   }
 }

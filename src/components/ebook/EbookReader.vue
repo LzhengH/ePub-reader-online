@@ -7,6 +7,11 @@
 <script>
   import { ebookMixin } from '../../utils/mixin'
   import Epub from 'epubjs'
+  import {
+    getFontFamily, saveFontFamily,
+    getFontSize, saveFontSize,
+    getTheme, saveTheme
+  } from '../../utils/localStorage'
   // 不加这个会报找不到epub的错误
   window.epub = Epub
   export default {
@@ -40,17 +45,53 @@
         this.setSettingVisible(-1)
         this.setFontFamilyVisible(false)
       },
+      initTheme() {
+        let defaultTheme = getTheme(this.fileName)
+        if (!defaultTheme) {
+          defaultTheme = this.themeList[0].name
+          saveTheme(this.fileName, defaultTheme)
+        }
+        this.setDefaultTheme(defaultTheme)
+        this.themeList.forEach(theme => {
+          this.rendition.themes.register(theme.name, theme.style)
+        })
+        this.rendition.themes.select(defaultTheme)
+      },
+      initFontSize() {
+        let fontSize = getFontSize(this.fileName)
+        if (!fontSize) {
+          saveFontSize(this.fileName, this.defaultFontSize)
+        } else {
+          this.rendition.themes.fontSize(fontSize + 'px')
+          this.setDefaultFontSize(fontSize)
+        }
+      },
+      initFontFamily() {
+        let font = getFontFamily(this.fileName)
+        if (!font) {
+          saveFontFamily(this.fileName, this.defaultFontFamily)
+        } else {
+          this.rendition.themes.font(font)
+          this.setDefaultFontFamily(font)
+        }
+      },
       initEpub() {
         const url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`
         this.book = new Epub(url)
         this.setCurrentBook(this.book) // 将book实例传入vuex
         this.rendition = this.book.renderTo('read', {
           width: window.innerWidth,
-          height: window.innerHeight
-          // method: 'default'
+          height: window.innerHeight,
+          method: 'default'
         })
         this.rendition.themes.font('Arial')
-        this.rendition.display()
+        this.rendition.display().then(() => {
+          // 将localStorage里的数据初始化到vuex中
+          this.initTheme()
+          this.initFontSize()
+          this.initFontFamily()
+          this.initGlobalStyle()
+        })
         // epub绑定事件
         this.rendition.on('touchstart', e => {
           // 利用changedTouches判断操作
@@ -86,7 +127,7 @@
       }
     },
     mounted() {
-      this.setFileName(this.$route.params.fileName.split('丨').join('/')).then(() => {
+      this.setFileName(this.$route.params.fileName.split('|').join('/')).then(() => {
         this.initEpub()
       })
     }

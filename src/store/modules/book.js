@@ -3,17 +3,17 @@ const book = {
     fileName: '', // 电子书路径
     menuVisible: false, // 是否显示菜单
     settingVisible: -1, // 二级菜单显示设置： -1不显示、0字号、1主题、2进度、3目录
-    defaultFontSize: 16, // 阅读器默认字号
-    defaultFontFamily: 'Default', // 默认字体
+    defaultFontSize: 16, // 阅读器字号
+    defaultFontFamily: 'Default', // 字体
     fontFamilyVisible: false, // 是否显示字体选择弹窗
-    defaultTheme: 'Default',
-    bookAvailable: false,
-    progress: 0,
-    section: 0,
+    defaultTheme: 'Default', // 主题
+    bookAvailable: false, // 章节进度条是否可用
+    progress: 0, // 章节进度条的百分比进度
+    section: 0, // 当前章节
     isPaginating: true,
     currentBook: null, // 当前的电子书book实例
     navigation: null,
-    cover: null,
+    cover: null, // 电子书封面路径
     metadata: null,
     paginate: '',
     pagelist: null,

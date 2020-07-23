@@ -10,10 +10,9 @@
   import {
     getFontFamily, saveFontFamily,
     getFontSize, saveFontSize,
-    getTheme, saveTheme
+    getTheme, saveTheme, getLocation
   } from '../../utils/localStorage'
-  // 不加这个会报找不到epub的错误
-  window.epub = Epub
+  window.epub = Epub // 不加这个会报找不到epub的错误
   export default {
     mixins: [ebookMixin],
     data() {
@@ -23,13 +22,17 @@
     methods: {
       prevPage() {
         if (this.rendition) {
-          this.rendition.prev()
+          this.rendition.prev().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
       nextPage() {
         if (this.rendition) {
-          this.rendition.next()
+          this.rendition.next().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
@@ -75,23 +78,33 @@
           this.setDefaultFontFamily(font)
         }
       },
-      initEpub() {
-        const url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`
-        this.book = new Epub(url)
-        this.setCurrentBook(this.book) // 将book实例传入vuex
+      initRendition() {
         this.rendition = this.book.renderTo('read', {
           width: window.innerWidth,
           height: window.innerHeight,
           method: 'default'
         })
         this.rendition.themes.font('Arial')
-        this.rendition.display().then(() => {
+        // 获取保存的当前阅读记录并渲染
+        const location = getLocation(this.fileName) || null
+        this.display(location, () => {
           // 将localStorage里的数据初始化到vuex中
           this.initTheme()
           this.initFontSize()
           this.initFontFamily()
           this.initGlobalStyle()
         })
+        // 让rendition加载字体css(必须使用url的方式)
+        this.rendition.hooks.content.register(contents => {
+          Promise.all([
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+          ]).then(() => {})
+        })
+      },
+      initGesture() {
         // epub绑定事件
         this.rendition.on('touchstart', e => {
           // 利用changedTouches判断操作
@@ -115,14 +128,19 @@
           e.stopPropagation()
           // e.preventDefault() // 使用阻止默认事件会使页面卡顿，先不使用
         }, { passive: false }) // 在这里处理阻止默认事件
-        // 让rendition加载字体css(必须使用url的方式)
-        this.rendition.hooks.content.register(contents => {
-          Promise.all([
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
-          ]).then(() => {})
+      },
+      initEpub() {
+        const url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`
+        this.book = new Epub(url)
+        this.setCurrentBook(this.book) // 将book实例传入vuex
+        this.initRendition() // 初始化rendition
+        this.initGesture() // 初始化手势
+        this.book.ready.then(() => { // 将书籍分页
+          return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16)).then(locations => {
+            // console.log(locations)
+            this.setBookAvailable(true)
+            this.refreshLocation() // 分页之后要重新刷新当前章节的进度
+          })
         })
       }
     },

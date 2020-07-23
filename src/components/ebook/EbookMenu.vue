@@ -3,22 +3,24 @@
     <transition name="slide-up">
       <div class="menu-wrapper" :class="{'hide-box-shadow': !menuVisible || settingVisible>=0}" v-show="menuVisible">
         <div class="icon-wrapper">
-          <span class="icon-menu" @click="showSetting(3)"></span>
+          <span class="icon-menu" @click="showSetting(settingVisible===3?-1:3)"></span>
         </div>
         <div class="icon-wrapper">
-          <span class="icon-progress" @click="showSetting(2)"></span>
+          <span class="icon-progress" @click="showSetting(settingVisible===2?-1:2)"></span>
         </div>
         <div class="icon-wrapper">
-          <span class="icon-bright" @click="showSetting(1)"></span>
+          <span class="icon-bright" @click="showSetting(settingVisible===1?-1:1)"></span>
         </div>
         <div class="icon-wrapper">
-          <span class="icon-A" @click="showSetting(0)"></span>
+          <span class="icon-A" @click="showSetting(settingVisible===0?-1:0)"></span>
         </div>
       </div>
     </transition>
     <ebook-setting-font></ebook-setting-font>
     <ebook-setting-font-popup></ebook-setting-font-popup>
     <ebook-setting-theme></ebook-setting-theme>
+    <ebook-setting-progress></ebook-setting-progress>
+    <ebook-slide></ebook-slide>
   </div>
 </template>
 
@@ -26,6 +28,8 @@
 import EbookSettingFont from './EbookSettingFont.vue'
 import EbookSettingFontPopup from './EbookSettingFontPopup.vue'
 import EbookSettingTheme from './EbookSettingTheme.vue'
+import EbookSettingProgress from './EbookSettingProgress.vue'
+import EbookSlide from './EbookSlide.vue'
 import { ebookMixin } from '../../utils/mixin'
 export default {
   mixins: [ebookMixin],
@@ -37,7 +41,9 @@ export default {
   components: {
     EbookSettingFont,
     EbookSettingFontPopup,
-    EbookSettingTheme
+    EbookSettingTheme,
+    EbookSettingProgress,
+    EbookSlide
   }
 }
 </script>

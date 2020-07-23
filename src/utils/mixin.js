@@ -1,6 +1,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import { themeList, addCss, removeAllCss } from './book'
-
+import { saveLocation, getReadTime } from './localStorage'
 // 获取vuex的getters
 export const ebookMixin = {
   computed: {
@@ -85,6 +85,39 @@ export const ebookMixin = {
         default:
           addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
       }
+    },
+    refreshLocation() {
+      const currentLocation = this.currentBook.rendition.currentLocation()// 获取当前按照分页的页数
+      const startCfi = currentLocation.start.cfi // 开始处的cfi
+      // 获取当前进度（0-1）
+      const progress = this.currentBook.locations.percentageFromCfi(startCfi)
+      this.setProgress(Math.floor(progress * 100))
+      this.setSection(currentLocation.start.index)
+      saveLocation(this.fileName, startCfi)
+    },
+    display(target, cb) {
+      if (target) {
+        return this.currentBook.rendition.display(target).then(() => {
+          this.refreshLocation()
+          if (cb) cb()
+        })
+      } else {
+        return this.currentBook.rendition.display().then(() => {
+          this.refreshLocation()
+          if (cb) cb()
+        })
+      }
+    },
+    getReadTimeByMinute() {
+      const readTime = getReadTime(this.fileName)
+      if (!readTime) {
+        return 0
+      } else {
+        return Math.ceil(readTime / 60)
+      }
+    },
+    getReadTimeText() {
+      return this.$t('book.haveRead').replace('$1', this.getReadTimeByMinute())
     }
   }
 }

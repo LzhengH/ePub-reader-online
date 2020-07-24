@@ -25,27 +25,58 @@
           alt="cover"/>
       </div>
       <div class="slide-contents-book-info-wrapper">
-        <div class="slide-contents-book-title"></div>
-        <div class="slide-contents-book-author"></div>
+        <div class="slide-contents-book-title">
+          <span class="slide-contents-book-title-text">
+            {{metadata ? metadata.title : ''}}
+          </span>
+        </div>
+        <div class="slide-contents-book-author">
+          <span class="slide-contents-book-author-text">
+            {{metadata ? metadata.creator : ''}}
+          </span>
+        </div>
       </div>
       <div class="slide-contents-book-progress-wrapper">
         <div class="slide-contents-book-progress">
           <span class="progress">{{progress + '%'}}</span>
-          <div class="progress-text">{{$t('book.haveRead2')}}</div>
+          <span class="progress-text">{{$t('book.haveRead2')}}</span>
         </div>
         <div class="slide-contents-book-time">{{this.getReadTimeText()}}</div>
       </div>
     </div>
+    <scroll
+      class="slide-contents-list"
+      :top="156"
+      :bottom="48"
+      ref="scroll"
+      >
+      <div
+        class="slide-contents-item"
+        v-for="(item, index) in navigation"
+        :key="index">
+        <span
+          class="slide-contents-item-label"
+          :class="{'selected': index === section}"
+          :style="contentItemStyle(item)"
+          @click="selectSection(item)">{{item.label}}</span>
+        <span class="slide-contents-item-page"></span>
+      </div>
+    </scroll>
   </div>
 </template>
 
 <script>
 import { ebookMixin } from '../../utils/mixin'
+import Scroll from '../common/Scroll'
+import { px2rem } from '../../utils/utils'
 export default {
   mixins: [ebookMixin],
+  components: {
+    Scroll
+  },
   data() {
     return {
-      searchVisible: false
+      searchVisible: false // '取消'字体是否出现
     }
   },
   methods: {
@@ -54,6 +85,17 @@ export default {
     },
     hideSearchPage() {
       this.searchVisible = false
+    },
+    contentItemStyle(item) {
+      return {
+        marginLeft: `${px2rem(item.level * 15)}rem`
+      }
+    },
+    selectSection(item) {
+      this.display(item.href, () => {
+        this.setMenuVisible(false)
+        this.setSettingVisible(-1)
+      })
     }
   }
 }
@@ -116,22 +158,22 @@ export default {
       padding: 0 px2rem(10);
       box-sizing: border-box;
       .slide-contents-book-title {
-        // width: px2rem(153.75);
+        width: px2rem(153.75);
         font-size: px2rem(14);
         line-height: px2rem(16);
         @include left;
         .slide-contents-book-title-text {
-          // @include ellipsis2(3);
+          @include ellipsis2(3);
         }
       }
       .slide-contents-book-author {
-        // width: px2rem(153.75);
+        width: px2rem(153.75);
         font-size: px2rem(12);
         line-height: px2rem(14);
         margin-top: px2rem(5);
         @include left;
         .slide-contents-book-author-text {
-          // @include ellipsis2(1);
+          @include ellipsis2(1);
         }
       }
     }

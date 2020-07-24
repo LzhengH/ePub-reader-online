@@ -14,7 +14,7 @@ const book = {
     currentBook: null, // 当前的电子书book实例
     navigation: null,
     cover: null, // 电子书封面路径
-    metadata: null,
+    metadata: null, // 电子书相关信息
     paginate: '',
     pagelist: null,
     offsetY: 0,

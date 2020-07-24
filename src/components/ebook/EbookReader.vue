@@ -7,6 +7,7 @@
 <script>
   import { ebookMixin } from '../../utils/mixin'
   import Epub from 'epubjs'
+  import { flatten } from '../../utils/book'
   import {
     getFontFamily, saveFontFamily,
     getFontSize, saveFontSize,
@@ -129,12 +130,33 @@
           // e.preventDefault() // 使用阻止默认事件会使页面卡顿，先不使用
         }, { passive: false }) // 在这里处理阻止默认事件
       },
+      parseBook() { // 获取封面、书籍信息、目录信息
+        this.book.loaded.cover.then(cover => {
+          this.book.archive.createUrl(cover).then(url => {
+            this.setCover(url)
+          })
+        })
+        this.book.loaded.metadata.then(metadata => {
+          this.setMetadata(metadata)
+        })
+        this.book.loaded.navigation.then(nav => {
+          const navItem = flatten(nav.toc)
+          function find(item, level = 0) { // 给每个项添加level属性，表示目录等级(start=0)
+            return !item.parent ? level : find(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
+          }
+          navItem.forEach(item => {
+            item.level = find(item)
+          })
+          this.setNavigation(navItem)
+        })
+      },
       initEpub() {
         const url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`
         this.book = new Epub(url)
         this.setCurrentBook(this.book) // 将book实例传入vuex
         this.initRendition() // 初始化rendition
         this.initGesture() // 初始化手势
+        this.parseBook() // 解析电子书
         this.book.ready.then(() => { // 将书籍分页
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16)).then(locations => {
             // console.log(locations)

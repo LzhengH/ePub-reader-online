@@ -3,12 +3,8 @@
     <div id="read"></div>
     <div
       class="ebook-reader-mask"
-      @click="onMaskClick"
-      @touchmove.stop.prevent="move"
-      @touchend="moveEnd"
-      @mousedown.left="onMouseEnter"
-      @mousemove.left="onMouseMove"
-      @mouseup.left="onMouseEnd">
+      @touchstart.prevent="moveStart"
+      @touchend.prevent="moveEnd">
     </div>
   </div>
 </template>
@@ -30,11 +26,8 @@
       }
     },
     methods: {
-      onMaskClick(e) {
-        if (this.mouseState && (this.mouseState === 2 || this.mouseState === 3)) {
-          return
-        }
-        const offsetX = e.offsetX
+      onMaskClick(e) { // 模拟点击事件
+        const offsetX = e.changedTouches[0].clientX
         const width = window.innerWidth
         if (offsetX > 0 && offsetX < width * 0.3) {
           this.prevPage()
@@ -44,22 +37,27 @@
           this.toggleTitleAndMenu()
         }
       },
-      move(e) {
-        let offsetY = 0
-        if (this.firstOffsetY) {
-          offsetY = e.changedTouches[0].clientY - this.firstOffsetY
-          this.setOffsetY(offsetY)
-        } else {
-          this.firstOffsetY = e.changedTouches[0].clientY
-        }
+      moveStart(e) {
+          // 触摸开始时的X坐标
+          this.touchStartX = e.changedTouches[0].clientX
+          // 触摸开始的时间
+          this.touchStartTime = e.timeStamp
       },
       moveEnd(e) {
-        this.setOffsetY(0)
-        this.firstOffsetY = null
+          // 移动的X轴距离
+          const offsetX = e.changedTouches[0].clientX - this.touchStartX
+          // 触摸的时间
+          const time = e.timeStamp - this.touchStartTime
+          if (time < 500 && offsetX > 40) {
+            this.prevPage()
+          } else if (time < 500 && offsetX < -40) {
+            this.nextPage()
+          } else if (time < 500 && offsetX <= 40 && offsetX >= -40) {
+            this.onMaskClick(e) // 触发点击事件
+          } else {
+            this.toggleTitleAndMenu()
+          }
       },
-      onMouseEnter() {},
-      onMouseMove() {},
-      onMouseEnd() {},
       prevPage() {
         if (this.rendition) {
           this.rendition.prev().then(() => {
@@ -216,6 +214,8 @@
 <style lang='scss' scoped>
   @import '../../assets/styles/mixin';
   .ebook-reader {
+    position: absolute;
+    z-index: 100;
     width: 100%;
     height: 100%;
     overflow: hidden;

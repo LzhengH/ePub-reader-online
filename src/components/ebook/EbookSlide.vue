@@ -14,12 +14,12 @@
                 @click="selectTab(1)"
                 >{{$t('book.navigation')}}
               </div>
-              <div
+              <!-- <div
                 class="content-page-tab-item"
                 :class="{'selected': currentTab === 2}"
                 @click="selectTab(2)"
                 >{{$t('book.bookmark')}}
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="content-empty" v-else>
@@ -44,8 +44,8 @@ export default {
   data() {
     return {
       currentTab: 1,
-      content: EbookSlideContents,
-      bookmark: null
+      content: EbookSlideContents, // 目录组件
+      bookmark: null // 书签组件
     }
   },
   methods: {

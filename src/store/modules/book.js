@@ -17,7 +17,7 @@ const book = {
     metadata: null, // 电子书相关信息
     paginate: '',
     pagelist: null,
-    offsetY: 0,
+    offsetY: 0, // 鼠标向下拉偏移量
     isBookmark: null
   },
   mutations: {

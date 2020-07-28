@@ -9,6 +9,8 @@
           type="text"
           class="slide-contents-search-input"
           :placeholder="$t('book.searchHint')"
+          v-model='searchText'
+          @keyup.enter.exact="search()"
           @click="showSearchPage()">
       </div>
       <div
@@ -17,7 +19,7 @@
         @click="hideSearchPage()"
         >{{$t('book.cancel')}}</div>
     </div>
-    <div class="slide-contents-book-wrapper">
+    <div class="slide-contents-book-wrapper" v-show="!searchVisible">
       <div class="slide-contents-book-img-wrapper">
         <img
           class="slide-contents-book-img"
@@ -41,14 +43,14 @@
           <span class="progress">{{progress + '%'}}</span>
           <span class="progress-text">{{$t('book.haveRead2')}}</span>
         </div>
-        <div class="slide-contents-book-time">{{this.getReadTimeText()}}</div>
+        <div class="slide-contents-book-time">{{getReadTimeText()}}</div>
       </div>
     </div>
     <scroll
       class="slide-contents-list"
       :top="156"
       :bottom="48"
-      ref="scroll"
+      v-show="!searchVisible"
       >
       <div
         class="slide-contents-item"
@@ -60,6 +62,19 @@
           :style="contentItemStyle(item)"
           @click="selectSection(item)">{{item.label}}</span>
         <span class="slide-contents-item-page"></span>
+      </div>
+    </scroll>
+    <scroll
+      class="slide-search-list"
+      :top='66'
+      :bottom='48'
+      v-show="searchVisible">
+      <div
+        class="slide-search-item"
+        v-for="(item, index) in searchList"
+        :key="index"
+        v-html="item.excerpt"
+        @click="displaySearch(item.cfi, true)">
       </div>
     </scroll>
   </div>
@@ -76,15 +91,51 @@ export default {
   },
   data() {
     return {
-      searchVisible: false // '取消'字体是否出现
+      searchVisible: false, // 搜索栏目是否出现
+      searchList: '', // 搜索结果列表
+      searchText: null, // 搜索关键字
     }
   },
   methods: {
+    doSearch(q) {
+      return Promise.all(
+        this.currentBook.spine.spineItems.map(
+          // load方法获取文本信息
+          section => section.load(this.currentBook.load.bind(this.currentBook))
+            // 全文检索q关键字
+            .then(section.find.bind(section, q))
+            // unload资源释放
+            .finally(section.unload.bind(section)))
+      // 二维数组降维
+      ).then(results => Promise.resolve([].concat.apply([], results)))
+    },
+    search() {
+      if (this.searchText && this.searchText.length > 0) {
+        this.doSearch(this.searchText).then(list => {
+          this.searchList = list
+          // 关键字高亮
+          this.searchList.map(item => {
+            item.excerpt = item.excerpt.replace(this.searchText, `<span class="content-search-text">${this.searchText}</span>`)
+            return item
+          })
+        })
+      }
+    },
+    displaySearch(target, highlight = false) {
+      this.display(target, () => {
+        this.setMenuVisible(false)
+        this.setSettingVisible(-1)
+        // 高亮显示
+        this.currentBook.rendition.annotations.highlight(target)
+      })
+    },
     showSearchPage() {
       this.searchVisible = true
     },
     hideSearchPage() {
       this.searchVisible = false
+      this.searchList = null
+      this.searchText = ''
     },
     contentItemStyle(item) {
       return {

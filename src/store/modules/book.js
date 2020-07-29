@@ -1,6 +1,6 @@
 const book = {
   state: {
-    fileName: '', // 电子书路径
+    fileName: '', // 电子书文件名
     menuVisible: false, // 是否显示菜单
     settingVisible: -1, // 二级菜单显示设置： -1不显示、0字号、1主题、2进度、3目录
     defaultFontSize: 16, // 阅读器字号

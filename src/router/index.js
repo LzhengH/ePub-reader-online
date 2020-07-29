@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/ebook'
+    redirect: '/home'
   },
   {
     path: '/ebook',
@@ -17,6 +17,10 @@ const routes = [
         component: () => import('../components/ebook/EbookReader.vue')
       }
     ]
+  },
+  {
+    path: '/home',
+    component: () => import('../views/Home.vue')
   }
 ]
 

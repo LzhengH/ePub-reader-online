@@ -39,6 +39,10 @@
 import { ebookMixin } from '../../utils/mixin'
 export default {
   mixins: [ebookMixin],
+  data() {
+    return {
+    }
+  },
   computed: {
     getSectionName() {
       // if (this.section) {
@@ -50,7 +54,15 @@ export default {
       //   }
       // }
       // return ''
-      return this.section ? this.navigation[this.section].label : ''
+      if (this.section) {
+        if (this.navigation[this.section + this.sectionOffset]) {
+          return this.navigation[this.section + this.sectionOffset].label
+        } else {
+          return ''
+        }
+      } else {
+        return ''
+      }
     }
   },
   methods: {

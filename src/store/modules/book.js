@@ -10,14 +10,15 @@ const book = {
     bookAvailable: false, // 章节进度条是否可用
     progress: 0, // 章节进度条的百分比进度
     section: 0, // 当前章节
+    sectionOffset: 0, // 章节对应目录下标的偏移量
     isPaginating: true,
     currentBook: null, // 当前的电子书book实例
-    navigation: null,
+    navigation: null, // 目录数组
     cover: null, // 电子书封面路径
     metadata: null, // 电子书相关信息
     paginate: '',
     pagelist: null,
-    offsetY: 0, // 鼠标向下拉偏移量
+    offsetY: 0, // 向下拉偏移量
     isBookmark: null
   },
   mutations: {
@@ -50,6 +51,9 @@ const book = {
     },
     SET_SECTION: (state, section) => {
       state.section = section
+    },
+    SET_SECTIONOFFSET: (state, sectionOffset) => {
+      state.sectionOffset = sectionOffset
     },
     SET_IS_PAGINATING: (state, isPaginating) => {
       state.isPaginating = isPaginating
@@ -109,6 +113,9 @@ const book = {
     },
     setSection: ({ commit }, section) => {
       return commit('SET_SECTION', section)
+    },
+    setSectionOffset: ({ commit }, sectionOffset) => {
+      return commit('SET_SECTIONOFFSET', sectionOffset)
     },
     setIsPaginating: ({ commit }, isPaginating) => {
       return commit('SET_IS_PAGINATING', isPaginating)

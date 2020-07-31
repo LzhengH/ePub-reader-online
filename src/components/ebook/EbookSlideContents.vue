@@ -58,7 +58,7 @@
         :key="index">
         <span
           class="slide-contents-item-label"
-          :class="{'selected': index === section}"
+          :class="{'selected': index === section + sectionOffset}"
           :style="contentItemStyle(item)"
           @click="selectSection(item)">{{item.label}}</span>
         <span class="slide-contents-item-page"></span>

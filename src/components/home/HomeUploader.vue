@@ -1,52 +1,77 @@
 <template>
-  <div class="home-uploader-wrapper">
-    <div
-      class="home-content-text-wrapper"
-      v-if="uploadStatus === false">
-      <span class="home-content-text">
-        {{title}}
-      </span>
-    </div>
-    <div
-      class="home-uploader"
-      v-if="uploadStatus === false">
-      <span
-        class="icon-add"
-        @click.stop="clickUpload()">
-      </span>
-      <input
-        id="file-input"
-        style="display: none"
-        type="file"
-        accept="application/*"
-        @change="fileUpload">
-    </div>
-    <div
-      class="home-uploader-loaded-content"
-      v-else>
-      <div>
-        <img class="home-uploader-loaded-cover" :src="cover" alt="cover">
+  <div>
+    <transition name="slide-down">
+    <div class="home-previous-wrapper" v-if="!uploadStatus && prevCover && prevMetadata && flag">
+      <div class="left">{{prevText}}</div>
+      <div class="center">
+        <img class="previous-cover" :src="prevCover" alt="prevCover">
+        <div class="previous-metadata-wrapper">
+          <div class="previous-metadata-title">
+            <span>{{prevMetadata.title}}</span>
+          </div>
+          <div class="previous-metadata-author">
+            <span>{{prevMetadata.creator}}</span>
+          </div>
+        </div>
       </div>
-      <div class="home-uploader-loaded-title">
-        <span class="text">
-          {{metadata ? metadata.title : ''}}
+      <div class="right">
+        <div class="continue-read">
+          <a href="javascript:;" @click="continueReadHandle()">
+            {{continueRead}}
+          </a>
+        </div>
+      </div>
+    </div>
+    </transition>
+    <div class="home-uploader-wrapper" :class="{'slide-down': !uploadStatus && prevCover && prevMetadata}">
+      <div
+        class="home-content-text-wrapper"
+        v-if="uploadStatus === false">
+        <span class="home-content-text">
+          {{title}}
         </span>
       </div>
-      <div class="home-uploader-loaded-author">
-        <span class="text">
-          {{metadata ? metadata.creator : ''}}
+      <div
+        class="home-uploader"
+        v-if="uploadStatus === false">
+        <span
+          class="icon-add"
+          @click.stop="clickUpload()">
         </span>
+        <input
+          id="file-input"
+          style="display: none"
+          type="file"
+          accept="application/*"
+          @change="fileUpload">
       </div>
-      <div class="home-uploader-loaded-operation">
-        <button
-          >
-          {{confirm}}
-        </button>
-        <button
-          @click="loadedCancel()"
-          >
-          {{cancel}}
-        </button>
+      <div
+        class="home-uploader-loaded-content"
+        v-else>
+        <div>
+          <img class="home-uploader-loaded-cover" :src="cover" alt="cover">
+        </div>
+        <div class="home-uploader-loaded-title">
+          <span class="text">
+            {{metadata ? metadata.title : ''}}
+          </span>
+        </div>
+        <div class="home-uploader-loaded-author">
+          <span class="text">
+            {{metadata ? metadata.creator : ''}}
+          </span>
+        </div>
+        <div class="home-uploader-loaded-operation">
+          <button
+            @click="loadedConfirm()">
+            {{confirm}}
+          </button>
+          <button
+            @click="loadedCancel()"
+            >
+            {{cancel}}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -65,6 +90,11 @@ export default {
       uploadCover: false, // 是否加载完相关信息
       confirm: this.$t('book.confirm'),
       cancel: this.$t('book.cancel'),
+      prevCover: null, // 上次观看的书籍封面
+      prevMetadata: null, // 上次观看的书籍信息
+      prevText: this.$t('detail.prevText'), // “上次观看”文本
+      continueRead: this.$t('detail.continueRead'), // “继续观看”文本
+      flag: true // 标记位，帮助上次观看快速收起来，如果选择完文件立即置为false；点cancel时置为true
     }
   },
   computed: {
@@ -73,32 +103,90 @@ export default {
     }
   },
   methods: {
-    clickUpload() {
+    clickUpload() { // 自定义的a标签触发上传文件的input
       const fileInput = document.getElementById('file-input')
       if (fileInput) {
         fileInput.click()
       }
     },
+    updateData(dbName, objectStoreName, key, value) {
+      // 打开数据库
+      const request = indexedDB.open(dbName)
+      request.onsuccess = function(success) {
+        // 获取数据库实例对象
+        let db = success.target.result
+        // 对某个表进行事务操作的事务权限控制
+        let transaction = db.transaction(objectStoreName, 'readwrite')
+        // 对表进行操作
+        let objectStore = transaction.objectStore(objectStoreName)
+        // 更新记录信息
+        let getResult = objectStore.put({ id: 1, ...value })
+        getResult.onerror = function(e) {
+          objectStore.add({ id: 1, ...value })
+        }
+      }
+    },
+    // 查询上次观看记录
+    selectPrevBook(dbName, objectStoreName, key) {
+      const _this = this
+      const request = indexedDB.open(dbName)
+      request.onsuccess = function(success) {
+        // 获取数据库实例对象
+        let db = success.target.result
+        // 对某个表进行事务操作的事务权限控制
+        let transaction = db.transaction(objectStoreName, 'readwrite')
+        // 对表进行操作
+        let objectStore = transaction.objectStore(objectStoreName)
+        // 更新记录信息
+        let getResult = objectStore.get(key)
+        getResult.onsuccess = function(e) {
+          const bookData = e.target.result.book
+          const bookName = e.target.result.name
+          if (bookData && bookName) {
+            _this.book = new Epub()
+            _this.book.open(bookData)
+            _this.bookName = bookName
+            // 获取上次的封面、相关信息
+            _this.book.loaded.cover.then(cover => {
+              _this.book.archive.createUrl(cover).then(url => {
+                _this.prevCover = url
+              })
+            })
+            _this.book.loaded.metadata.then(metadata => {
+              _this.prevMetadata = metadata
+            })
+          }
+        }
+      }
+    },
+    continueReadHandle() { // 继续阅读操作
+      this.setCurrentBook(this.book)
+      this.setFileName(this.bookName)
+      this.setCover(this.prevCover)
+      this.setMetadata(this.prevMetadata)
+      this.$router.push(`/ebook/${this.fileName}`)
+    },
     fileUpload(e) {
+      this.flag = false // 标记位,置为false
       let file = e.target.files[0]
       let fileReader = new FileReader()
       if (/\/epub/.test(file.type)) {
         fileReader.readAsArrayBuffer(file)
         fileReader.onload = fileReaderEvent => {
-          let bookData = fileReaderEvent.target.result
-          let book = new Epub()
-          book.open(bookData)
-          console.log(book)
+          const bookData = fileReaderEvent.target.result
+          this.book = new Epub()
+          this.book.open(bookData)
+          this.bookData = bookData
           this.setFileName(file.name)
-          this.setCurrentBook(book)
+          this.setCurrentBook(this.book)
           // 获取封面、相关信息
-          book.loaded.cover.then(cover => {
-            book.archive.createUrl(cover).then(url => {
+          this.book.loaded.cover.then(cover => {
+            this.book.archive.createUrl(cover).then(url => {
               this.setCover(url)
               this.uploadCover = true
             })
           })
-          book.loaded.metadata.then(metadata => {
+          this.book.loaded.metadata.then(metadata => {
             this.setMetadata(metadata)
             this.uploadMetadata = true
           })
@@ -107,19 +195,98 @@ export default {
         alert('请选择epub类型的文件')
       }
     },
+    loadedConfirm() {
+      // indexedDB存的是二进制缓冲数组
+      this.updateData('bookDB', 'currentBook', 1, { name: this.fileName, book: this.bookData })
+      this.$router.push(`/ebook/${this.fileName}`)
+    },
     loadedCancel() { // 取消选择
       this.uploadCover = false
       this.uploadMetadata = false
+      this.flag = true
     }
+  },
+  mounted() {
+    this.selectPrevBook('bookDB', 'currentBook', 1) // 查询并加载上次阅读书籍信息
   }
 }
 </script>
 
 <style lang="scss" scoped>
 @import '../../assets/styles/mixin.scss';
+.home-previous-wrapper {
+  display: flex;
+  position: relative;
+  z-index: 1;
+  height: px2rem(120);
+  width: 100%;
+  align-items: center;
+  padding: px2rem(10) px2rem(10) px2rem(10) px2rem(10);
+  border: px2rem(5) solid #FCC800;
+  border-top: none;
+  box-sizing: border-box;
+  .left {
+    color: #455A64;
+    font-size: px2rem(17);
+    line-height: 1.5;
+    flex: 0 0 px2rem(50);
+    padding-right: px2rem(5);
+  }
+  .center {
+    flex: 1;
+    @include left;
+    .previous-cover {
+      flex: 0 0 px2rem(64);
+      width: px2rem(64);
+    }
+    .previous-metadata-wrapper {
+      flex: 1;
+      width: px2rem(180);
+      @include left;
+      flex-direction: column;
+      padding: 0 px2rem(10);
+      box-sizing: border-box;
+      font-size: px2rem(14);
+      line-height: 1.5;
+      .previous-metadata-title {
+        color: #212121;
+        text-align: left;
+        padding: px2rem(2);
+        overflow: hidden;
+        span {
+          @include ellipsis2(3);
+        }
+      }
+      .previous-metadata-author {
+        color: #607D8B;
+        padding-top: px2rem(10);
+        width: 100%;
+        @include ellipsis;
+      }
+    }
+  }
+  .right {
+    flex: 0 0 px2rem(40);
+    font-size: px2rem(18);
+    .continue-read {
+      line-height: 1.5;
+      text-align: center;
+      a {
+        color: #455A64;
+        border-bottom: px2rem(2) solid #9da4a7;
+        text-decoration: none;
+      }
+    }
+  }
+}
 .home-uploader-wrapper {
+  position: relative;
+  top: px2rem(30);
   flex-direction: column;
   @include center;
+  &.slide-down {
+    transition: all .15 linear;
+  }
   .home-content-text-wrapper {
     font-size: px2rem(20);
     margin-bottom: px2rem(20);

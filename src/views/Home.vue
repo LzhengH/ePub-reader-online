@@ -23,10 +23,8 @@
       </div>
     </div>
     <div class="home-content-wrapper">
-      <div class="home-content">
-        <home-uploader>
-        </home-uploader>
-      </div>
+      <home-uploader>
+      </home-uploader>
     </div>
   </div>
 </template>
@@ -87,9 +85,12 @@
 .home {
   width: 100%;
   height: 100%;
+  overflow: hidden;
   font-size: px2rem(16);
   background-color: #eee;
   .home-title-wrapper {
+    position: relative;
+    z-index: 10;
     @include center;
     height: px2rem(77);
     color: #333;
@@ -136,10 +137,6 @@
     position: relative;
     width: 100%;
     height: 100%;
-    .home-content {
-      position: relative;
-      top: px2rem(30);
-    }
   }
 }
 </style>

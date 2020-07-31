@@ -29,6 +29,8 @@ const messages = {
     trial: '试读',
     lang: '语言',
     currentLang: '中文',
+    prevText: '上次阅读',
+    continueRead: '继续阅读',
     loading: '加载中...',
     more: '更多',
     read: '阅读',

@@ -29,6 +29,8 @@ const messages = {
     trial: 'Trial Reading',
     lang: 'Language',
     currentLang: 'English',
+    prevText: 'Last reading',
+    continueRead: 'Read on',
     more: 'more',
     loading: 'Loading...',
     read: 'Read',

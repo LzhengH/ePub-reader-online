@@ -25,13 +25,15 @@
       return {
       }
     },
+    computed: {
+    },
     methods: {
       onMaskClick(e) { // 模拟点击事件
         const offsetX = e.changedTouches[0].clientX
         const width = window.innerWidth
-        if (offsetX > 0 && offsetX < width * 0.3) {
+        if (offsetX > 0 && offsetX < width * 0.25) {
           this.prevPage()
-        } else if (offsetX > 0 && offsetX > width * 0.7) {
+        } else if (offsetX > 0 && offsetX > width * 0.75) {
           this.nextPage()
         } else {
           this.toggleTitleAndMenu()
@@ -116,6 +118,29 @@
           this.setDefaultFontFamily(font)
         }
       },
+      reloadCurrentBook(dbName, objectStoreName, key) {
+        const _this = this
+        const request = indexedDB.open(dbName)
+        request.onsuccess = function(success) {
+          // 获取数据库实例对象
+          let db = success.target.result
+          // 对某个表进行事务操作的事务权限控制
+          let transaction = db.transaction(objectStoreName, 'readwrite')
+          // 对表进行操作
+          let objectStore = transaction.objectStore(objectStoreName)
+          // 更新记录信息
+          let getResult = objectStore.get(key)
+          getResult.onsuccess = function(e) {
+            const bookData = e.target.result.book
+            const bookName = e.target.result.name
+            _this.book = new Epub()
+            _this.book.open(bookData)
+            _this.setFileName(bookName)
+            _this.setCurrentBook(_this.book)
+            _this.initEpub()
+          }
+        }
+      },
       initRendition() {
         this.rendition = this.book.renderTo('read', {
           width: window.innerWidth,
@@ -168,14 +193,18 @@
         }, { passive: false }) // 在这里处理阻止默认事件
       },
       parseBook() { // 获取封面、书籍信息、目录信息
-        this.book.loaded.cover.then(cover => {
-          this.book.archive.createUrl(cover).then(url => {
-            this.setCover(url)
+        if (!this.cover) {
+          this.book.loaded.cover.then(cover => {
+            this.book.archive.createUrl(cover).then(url => {
+              this.setCover(url)
+            })
           })
-        })
-        this.book.loaded.metadata.then(metadata => {
-          this.setMetadata(metadata)
-        })
+        }
+        if (!this.metadata) {
+          this.book.loaded.metadata.then(metadata => {
+            this.setMetadata(metadata)
+          })
+        }
         this.book.loaded.navigation.then(nav => {
           const navItem = flatten(nav.toc)
           function find(item, level = 0) { // 给每个项添加level属性，表示目录等级(start=0)
@@ -187,26 +216,43 @@
           this.setNavigation(navItem)
         })
       },
+      initSectionOffset() {
+        // 由于每本书分页情况不同会有目录和section对不上的情况，这里进行偏移量判断
+        const currentLocation = this.currentBook.rendition.currentLocation()// 获取当前按照分页的页数
+        for (let i = -5; i <= 5; i++) { // 一般上下浮动5以内
+          if (this.navigation[this.section + i] && currentLocation.start) {
+            if (this.navigation[this.section + i].href === currentLocation.start.href) {
+              this.setSectionOffset(i) // 保存偏移量到vuex
+              break
+            }
+          }
+        }
+      },
       initEpub() {
-        const url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`
-        this.book = new Epub(url)
-        this.setCurrentBook(this.book) // 将book实例传入vuex
+        // const url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`
+        this.book = this.currentBook
+        // this.setCurrentBook(this.book) // 将book实例传入vuex
         this.initRendition() // 初始化rendition
-        this.initGesture() // 初始化手势
+        // this.initGesture() // 初始化手势
         this.parseBook() // 解析电子书
         this.book.ready.then(() => { // 将书籍分页
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16)).then(locations => {
             // console.log(locations)
-            this.setBookAvailable(true)
+            this.initSectionOffset() // 页数和目录之间偏移量计算
             this.refreshLocation() // 分页之后要重新刷新当前章节的进度
+            this.setBookAvailable(true)
           })
         })
       }
     },
     mounted() {
-      this.setFileName(this.$route.params.fileName.split('|').join('/')).then(() => {
+      this.setBookAvailable(false)
+      if (!this.book) {
+        // 从indexedDB中获取数据重新加载book
+        this.reloadCurrentBook('bookDB', 'currentBook', 1)
+      } else {
         this.initEpub()
-      })
+      }
     }
   }
 </script>

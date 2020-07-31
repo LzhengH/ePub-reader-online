@@ -20,12 +20,15 @@ const routes = [
   },
   {
     path: '/home',
-    component: () => import('../views/Home.vue')
+    component: () => import('../views/Home.vue'),
   }
 ]
 
 const router = new VueRouter({
-  routes
+  routes,
+  // meta: {
+  //   keepAlive: true
+  // }
 })
 
 export default router

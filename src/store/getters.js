@@ -9,6 +9,7 @@ const book = {
   bookAvailable: state => state.book.bookAvailable,
   progress: state => state.book.progress,
   section: state => state.book.section,
+  sectionOffset: state => state.book.sectionOffset,
   isPaginating: state => state.book.isPaginating,
   currentBook: state => state.book.currentBook,
   navigation: state => state.book.navigation,

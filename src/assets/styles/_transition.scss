@@ -9,8 +9,7 @@
 .fade-enter-active, .fade-leave-active,
 .slide-right-enter-active, .slide-right-leave-active,
 .popup-slide-up-enter-active, .popup-slide-up-leave-active,
-.fade-slide-right-enter-active, .fade-slide-right-leave-active,
-.scale-enter-active, .scale-leave-active {
+.fade-slide-right-enter-active, .fade-slide-right-leave-active {
   transition: all .15s linear;
 }
 .slide-up-enter, .slide-up-leave-to {
@@ -43,4 +42,7 @@
 }
 .scale-enter-to, .scale-leave {
   transform: scale(1, 1);
+}
+.scale-enter-active, .scale-leave-active {
+  transition: all .13s ease;
 }

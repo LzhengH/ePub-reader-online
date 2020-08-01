@@ -56,7 +56,9 @@ const messages = {
     haveRead2: 'already read',
     minutes: 'minutes',
     confirm: 'Confirm',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    noneTitle: 'No title',
+    noneCreator: 'No author'
   }
 }
 

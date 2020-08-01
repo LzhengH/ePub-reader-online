@@ -23,7 +23,7 @@
       </div>
     </div>
     </transition>
-    <div class="home-uploader-wrapper" :class="{'slide-down': !uploadStatus && prevCover && prevMetadata}">
+    <div class="home-uploader-wrapper">
       <div
         class="home-content-text-wrapper"
         v-if="uploadStatus === false">
@@ -33,10 +33,10 @@
       </div>
       <div
         class="home-uploader"
-        v-if="uploadStatus === false">
+        v-if="uploadStatus === false"
+        @click.stop="clickUpload()">
         <span
-          class="icon-add"
-          @click.stop="clickUpload()">
+          class="icon-add">
         </span>
         <input
           id="file-input"
@@ -151,9 +151,13 @@ export default {
               _this.book.archive.createUrl(cover).then(url => {
                 _this.prevCover = url
               })
+            }).catch(() => {
+              _this.prevCover = require('../../assets/noCover.jpg')
             })
             _this.book.loaded.metadata.then(metadata => {
               _this.prevMetadata = metadata
+              }).catch(() => {
+                _this.prevMetadata = { title: _this.$t('book.noneTitle'), creator: _this.$t('book.noneCreator') }
             })
           }
         }
@@ -172,7 +176,7 @@ export default {
       let fileReader = new FileReader()
       if (/\/epub/.test(file.type)) {
         fileReader.readAsArrayBuffer(file)
-        fileReader.onload = fileReaderEvent => {
+        fileReader.onload = fileReaderEvent => { // 有问题
           const bookData = fileReaderEvent.target.result
           this.book = new Epub()
           this.book.open(bookData)
@@ -185,9 +189,15 @@ export default {
               this.setCover(url)
               this.uploadCover = true
             })
+          }).catch(() => {
+            this.setCover(require('../../assets/noCover.jpg'))
+            this.uploadCover = true
           })
           this.book.loaded.metadata.then(metadata => {
             this.setMetadata(metadata)
+            this.uploadMetadata = true
+          }).catch(() => {
+            this.setMetadata({ title: this.$t('book.noneTitle'), creator: this.$t('book.noneCreator') })
             this.uploadMetadata = true
           })
         }
@@ -249,6 +259,7 @@ export default {
       font-size: px2rem(14);
       line-height: 1.5;
       .previous-metadata-title {
+        width: 100%;
         color: #212121;
         text-align: left;
         padding: px2rem(2);
@@ -284,9 +295,7 @@ export default {
   top: px2rem(30);
   flex-direction: column;
   @include center;
-  &.slide-down {
-    transition: all .15 linear;
-  }
+  transition: all .15 linear;
   .home-content-text-wrapper {
     font-size: px2rem(20);
     margin-bottom: px2rem(20);
@@ -305,7 +314,8 @@ export default {
     flex-direction: column;
     @include center;
     .home-uploader-loaded-cover {
-      width: px2rem(260);
+      height: px2rem(360);
+      box-shadow: px2rem(3) px2rem(3) px2rem(8) px2rem(3) rgba(#000, .2);
     }
     .home-uploader-loaded-title {
       text-align: center;

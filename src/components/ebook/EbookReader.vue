@@ -198,11 +198,16 @@
             this.book.archive.createUrl(cover).then(url => {
               this.setCover(url)
             })
+          }).catch(() => {
+            this.setCover(require('../../assets/noCover.jpg'))
           })
         }
         if (!this.metadata) {
           this.book.loaded.metadata.then(metadata => {
             this.setMetadata(metadata)
+          }).catch(() => {
+            this.setMetadata({ title: this.$t('book.noneTitle'), creator: this.$t('book.noneCreator') })
+            this.uploadMetadata = true
           })
         }
         this.book.loaded.navigation.then(nav => {

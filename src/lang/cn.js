@@ -56,7 +56,9 @@ const messages = {
     haveRead2: '已读',
     minutes: '分钟',
     confirm: '确定',
-    cancel: '取消'
+    cancel: '取消',
+    noneTitle: '暂无标题',
+    noneCreator: '暂无作者'
   }
 }
 

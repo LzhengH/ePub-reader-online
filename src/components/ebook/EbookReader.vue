@@ -1,6 +1,9 @@
 <template>
   <div class="ebook-reader">
-    <div id="read"></div>
+    <div id="read" v-show='isBookShow'></div>
+    <div class="content-empty" v-if='!isBookShow'>
+      <ebook-loading></ebook-loading>
+    </div>
     <div
       class="ebook-reader-mask"
       @touchstart.prevent="moveStart"
@@ -11,6 +14,7 @@
 
 <script>
   import { ebookMixin } from '../../utils/mixin'
+  import EbookLoading from './EbookLoading'
   import Epub from 'epubjs'
   import { flatten } from '../../utils/book'
   import {
@@ -23,9 +27,13 @@
     mixins: [ebookMixin],
     data() {
       return {
+        isBookShow: false
       }
     },
     computed: {
+    },
+    components: {
+      EbookLoading
     },
     methods: {
       onMaskClick(e) { // 模拟点击事件
@@ -151,6 +159,7 @@
         // 获取保存的当前阅读记录并渲染
         const location = getLocation(this.fileName) || null
         this.display(location, () => {
+          this.isBookShow = true // 显示书籍
           // 将localStorage里的数据初始化到vuex中
           this.initTheme()
           this.initFontSize()
@@ -163,7 +172,10 @@
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/方正黑体.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/方正楷体.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/方正书宋.css`)
           ]).then(() => {})
         })
       },
@@ -243,16 +255,17 @@
         this.book.ready.then(() => { // 将书籍分页
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16)).then(locations => {
             // console.log(locations)
-            this.initSectionOffset() // 页数和目录之间偏移量计算
             this.refreshLocation() // 分页之后要重新刷新当前章节的进度
+            this.initSectionOffset() // 页数和目录之间偏移量计算
             this.setBookAvailable(true)
           })
         })
       }
     },
     mounted() {
+      this.isBookShow = false
       this.setBookAvailable(false)
-      if (!this.book) {
+      if (!this.currentBook) {
         // 从indexedDB中获取数据重新加载book
         this.reloadCurrentBook('bookDB', 'currentBook', 1)
       } else {
@@ -270,6 +283,12 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+    .content-empty {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
     .ebook-reader-mask {
       position: absolute;
       top: 0;

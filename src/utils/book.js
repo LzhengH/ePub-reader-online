@@ -10,6 +10,9 @@ export const FONT_SIZE_LIST = [
 ]
 export const FONT_FAMILY = [
   { font: 'Default' },
+  { font: '方正黑体' },
+  { font: '方正楷体' },
+  { font: '方正书宋' },
   { font: 'Cabin' },
   { font: 'Days One' },
   { font: 'Montserrat' },

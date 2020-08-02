@@ -64,7 +64,6 @@
         }
       },
       changeLang() {
-        console.log('切换语言')
         switch (this.$i18n.locale) {
           case 'en':
             this.$i18n.locale = 'cn'

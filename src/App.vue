@@ -13,9 +13,6 @@
         request.onsuccess = e => {
           this.db = e.target.result
         }
-        request.onerror = err => {
-          console.error(err)
-        }
         request.onupgradeneeded = e => { // IDBVersionChangeEvent
           let db = e.target.result
           if (!db.objectStoreNames.contains('currentBook')) {

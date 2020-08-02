@@ -140,9 +140,9 @@ export default {
         // 更新记录信息
         let getResult = objectStore.get(key)
         getResult.onsuccess = function(e) {
-          const bookData = e.target.result.book
-          const bookName = e.target.result.name
-          if (bookData && bookName) {
+          if (e.target.result) {
+            const bookData = e.target.result.book
+            const bookName = e.target.result.name
             _this.book = new Epub()
             _this.book.open(bookData)
             _this.bookName = bookName
@@ -299,7 +299,6 @@ export default {
   .home-content-text-wrapper {
     font-size: px2rem(20);
     margin-bottom: px2rem(20);
-    .home-content-text {}
   }
   .home-uploader {
     padding: px2rem(2) px2rem(4) px2rem(1);

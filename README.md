@@ -1,24 +1,24 @@
 # ivan-reader
 
-## Project setup
-```
-yarn install
-```
+`epub类型电子书在线阅读器`
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## 技术栈
 
-### Compiles and minifies for production
-```
-yarn build
-```
+- vue全家桶
+- vue-i18n国际化
+- localStorage/indexedDB本地存储
+- epubjs解析epub文件
 
-### Lints and fixes files
-```
-yarn lint
-```
+## 功能
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+上传epub类型的文件进行解析，并可以在线阅读
+
+提供了目录、进度、主题、字体字号等功能的显示及切换
+
+全文查找内容并跳转
+
+保存上次阅读记录并可以定位到上次离开的位置
+
+保存每本书的阅读习惯（主题、字体字号）
+
+国际化的阅读菜单，可以中/英文切换

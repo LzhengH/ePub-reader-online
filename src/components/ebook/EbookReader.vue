@@ -233,18 +233,6 @@
           this.setNavigation(navItem)
         })
       },
-      initSectionOffset() {
-        // 由于每本书分页情况不同会有目录和section对不上的情况，这里进行偏移量判断
-        const currentLocation = this.currentBook.rendition.currentLocation()// 获取当前按照分页的页数
-        for (let i = -5; i <= 5; i++) { // 一般上下浮动5以内
-          if (this.navigation[this.section + i] && currentLocation.start) {
-            if (this.navigation[this.section + i].href === currentLocation.start.href) {
-              this.setSectionOffset(i) // 保存偏移量到vuex
-              break
-            }
-          }
-        }
-      },
       initEpub() {
         // const url = `${process.env.VUE_APP_RES_URL}/epub/${this.fileName}.epub`
         this.book = this.currentBook
@@ -256,7 +244,6 @@
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16)).then(locations => {
             // console.log(locations)
             this.refreshLocation() // 分页之后要重新刷新当前章节的进度
-            this.initSectionOffset() // 页数和目录之间偏移量计算
             this.setBookAvailable(true)
           })
         })
@@ -265,6 +252,7 @@
     mounted() {
       this.isBookShow = false
       this.setBookAvailable(false)
+      this.setSectionOffset(null)
       if (!this.currentBook) {
         // 从indexedDB中获取数据重新加载book
         this.reloadCurrentBook('bookDB', 'currentBook', 1)

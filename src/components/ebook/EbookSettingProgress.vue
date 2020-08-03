@@ -4,7 +4,7 @@
       <div class="setting-progress" >
         <div class="read-time-wrapper">
           <span class="read-time-text">{{getReadTimeText()}}</span>
-          <span class="icon-forward"></span>
+          <!-- <span class="icon-forward"></span> -->
         </div>
         <div class="progress-wrapper">
           <div class="progress-icon-wrapper">
@@ -45,16 +45,7 @@ export default {
   },
   computed: {
     getSectionName() {
-      // if (this.section) {
-      //   const sectionInfo = this.currentBook.section(this.section)
-      //   if (sectionInfo && this.currentBook.navigation.get(sectionInfo.href)) {
-      //     return this.currentBook.navigation.get(sectionInfo.href).label
-      //   } else {
-      //     return ''
-      //   }
-      // }
-      // return ''
-      if (this.section) {
+      if (this.section && this.sectionOffset != null) {
         if (this.navigation[this.section + this.sectionOffset]) {
           return this.navigation[this.section + this.sectionOffset].label
         } else {

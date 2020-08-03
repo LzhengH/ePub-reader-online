@@ -2,6 +2,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
     ? './'
     : '/',
+  outputDir: 'book', // 打包名称
   configureWebpack: {
     performance: {
       hints: 'warning',

@@ -9,18 +9,20 @@ const routes = [
     redirect: '/home'
   },
   {
-    path: '/ebook',
+    path: '/book',
     component: () => import('../views/ebook/index.vue'),
     children: [
       {
         path: ':fileName',
-        component: () => import('../components/ebook/EbookReader.vue')
+        component: () => import('../components/ebook/EbookReader.vue'),
+        name: '阅读页面'
       }
     ]
   },
   {
     path: '/home',
     component: () => import('../views/Home.vue'),
+    name: '电子书选择'
   }
 ]
 

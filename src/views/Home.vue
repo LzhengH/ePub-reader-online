@@ -1,7 +1,10 @@
 <template>
   <div class="home" @click="hideMore()">
     <div class="home-title-wrapper">
-      <div class="left">{{title}}</div>
+      <div class="left">
+        <h1 style="display: none">epub电子书在线阅读器</h1>
+        {{title}}
+      </div>
       <div class="right">
         <div id='icon-wrapper' class="icon-wrapper">
           <div class="icon-block" @click="toggleMore()">

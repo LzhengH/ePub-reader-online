@@ -14,3 +14,7 @@ new Vue({
   i18n,
   render: h => h(App)
 }).$mount('#app')
+router.beforeEach((to, from, next) => {
+  document.title = to.name // 让页面显示路由对应的name值。
+  next()
+})

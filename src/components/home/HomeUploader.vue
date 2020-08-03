@@ -168,7 +168,7 @@ export default {
       this.setFileName(this.bookName)
       this.setCover(this.prevCover)
       this.setMetadata(this.prevMetadata)
-      this.$router.push(`/ebook/${this.fileName}`)
+      this.$router.push(`/book/${this.fileName}`)
     },
     fileUpload(e) {
       this.flag = false // 标记位,置为false
@@ -208,7 +208,7 @@ export default {
     loadedConfirm() {
       // indexedDB存的是二进制缓冲数组
       this.updateData('bookDB', 'currentBook', 1, { name: this.fileName, book: this.bookData })
-      this.$router.push(`/ebook/${this.fileName}`)
+      this.$router.push(`/book/${this.fileName}`)
     },
     loadedCancel() { // 取消选择
       this.uploadCover = false

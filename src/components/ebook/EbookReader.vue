@@ -247,18 +247,24 @@
             this.setBookAvailable(true)
           })
         })
+      },
+      initStatus() {
+        this.isBookShow = false
+        this.setBookAvailable(false)
+        this.setSectionOffset(null)
       }
     },
     mounted() {
-      this.isBookShow = false
-      this.setBookAvailable(false)
-      this.setSectionOffset(null)
+      this.initStatus()
       if (!this.currentBook) {
         // 从indexedDB中获取数据重新加载book
         this.reloadCurrentBook('bookDB', 'currentBook', 1)
       } else {
         this.initEpub()
       }
+    },
+    destroyed() {
+      this.hideTitleAndMenu() // 将开启的菜单关闭
     }
   }
 </script>

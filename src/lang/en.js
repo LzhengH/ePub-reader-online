@@ -44,6 +44,7 @@ const messages = {
     pulldownDeleteMark: 'Pull down to delete bookmark',
     releaseDeleteMark: 'Release to add bookmark',
     selectFont: 'Select Font',
+    waitFont: 'Please wait for the file to load for the first time',
     haveRead: 'Already read $1 minutes',
     themeDefault: 'Default',
     themeGold: 'Grace',

@@ -44,6 +44,7 @@ const messages = {
     pulldownDeleteMark: '下拉删除书签',
     releaseDeleteMark: '松手删除书签',
     selectFont: '选择字体',
+    waitFont: '首次进入请等待文件加载',
     haveRead: '已读$1分钟',
     themeDefault: '默认',
     themeGold: '雅致',

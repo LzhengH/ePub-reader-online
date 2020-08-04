@@ -5,7 +5,10 @@
         <div class="ebook-popup-title-icon">
           <span class="icon-down2" @click="hide"></span>
         </div>
-        <span class="ebook-popup-title-text">{{$t('book.selectFont')}}</span>
+        <span class="ebook-popup-title-text">
+          {{$t('book.selectFont')}}
+          ({{$t('book.waitFont')}})
+        </span>
       </div>
       <div class="ebook-popup-list-wrapper">
         <div
@@ -78,15 +81,14 @@ export default {
       text-align: center;
       @include center;
       .ebook-popup-title-icon {
-        position: absolute;
-        left: px2rem(15);
-        top: 0;
+        flex: 0 0 px2rem(20);
         height: 100%;
         @include center;
         font-size: px2rem(16);
         font-weight: bold;
       }
       .ebook-popup-title-text {
+        flex: 1;
         font-size: px2rem(14);
         font-weight: bold;
       }

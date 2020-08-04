@@ -5,7 +5,13 @@
 </template>
 
 <script>
+  import { FONT_FILE_LIST } from './utils/book'
   export default {
+    data() {
+      return {
+        fontFileList: FONT_FILE_LIST // 字体实体文件名列表
+      }
+    },
     methods: {
       openIndexedDB(name = 'bookDB', version = 1) {
         // indexedDB缓存当前书籍，保证刷新时能够继续阅读
@@ -22,10 +28,21 @@
       },
       colseIndexedDB() {
         this.db.close()
+      },
+      prefetchFonts() { // 预加载字体资源文件
+        const head = document.getElementsByTagName('head')[0]
+        this.fontFileList.forEach(item => {
+          const link = document.createElement('link')
+          link.rel = 'prefetch'
+          link.as = 'font'
+          link.href = `${process.env.VUE_APP_RES_URL}/fonts/${item}`
+          head.appendChild(link)
+        })
       }
     },
     created() {
       this.openIndexedDB('bookDB', 1)
+      this.prefetchFonts()
     },
     destroyed() {
       this.colseIndexedDB()

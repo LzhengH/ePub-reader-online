@@ -18,6 +18,9 @@ export const FONT_FAMILY = [
   { font: 'Montserrat' },
   { font: 'Tangerine' }
 ]
+export const FONT_FILE_LIST = ['daysOne.woff2', 'cabin.woff2', 'montserrat.woff2', 'tangerine.woff2',
+  '方正黑体.ttf', '方正楷体.ttf', '方正书宋.ttf'
+]
 export function themeList(vue) {
   return [
     {

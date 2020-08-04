@@ -16,7 +16,7 @@
   import { ebookMixin } from '../../utils/mixin'
   import EbookLoading from './EbookLoading'
   import Epub from 'epubjs'
-  import { flatten } from '../../utils/book'
+  import { flatten, FONT_FILE_LIST } from '../../utils/book'
   import {
     getFontFamily, saveFontFamily,
     getFontSize, saveFontSize,
@@ -27,7 +27,8 @@
     mixins: [ebookMixin],
     data() {
       return {
-        isBookShow: false
+        isBookShow: false, // 阅读器主页面是否显示
+        fontFileList: FONT_FILE_LIST // 字体实体文件名列表
       }
     },
     computed: {
@@ -168,15 +169,10 @@
         })
         // 让rendition加载字体css(必须使用url的方式)
         this.rendition.hooks.content.register(contents => {
-          Promise.all([
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/方正黑体.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/方正楷体.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/方正书宋.css`)
-          ]).then(() => {})
+          this.fontFileList.forEach(item => {
+            let fileName = item.split('.')[0]
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/${fileName}.css`)
+          })
         })
       },
       initGesture() {

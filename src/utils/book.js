@@ -8,18 +8,8 @@ export const FONT_SIZE_LIST = [
   { fontSize: 22 },
   { fontSize: 24 }
 ]
-export const FONT_FAMILY = [
-  { font: 'Default' },
-  { font: '方正黑体' },
-  { font: '方正楷体' },
-  { font: '方正书宋' },
-  { font: 'Cabin' },
-  { font: 'Days One' },
-  { font: 'Montserrat' },
-  { font: 'Tangerine' }
-]
-export const FONT_FILE_LIST = ['daysOne.woff2', 'cabin.woff2', 'montserrat.woff2', 'tangerine.woff2',
-  '方正黑体.ttf', '方正楷体.ttf', '方正书宋.ttf'
+export const FONT_FILE_LIST = ['方正楷体.ttf', '方正书宋.ttf',
+  'cabin.woff2', 'daysOne.woff2', 'montserrat.woff2', 'tangerine.woff2',
 ]
 export function themeList(vue) {
   return [

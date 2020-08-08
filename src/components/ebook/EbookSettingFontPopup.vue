@@ -15,16 +15,17 @@
           class="ebook-popup-item"
           v-for="(item, index) in fontFamilyList"
           :key="index"
-          @click="setFontFamily(item.font)">
+          @click="setFontFamily(item, index)">
           <div
             class="ebook-popup-item-text"
             :class="{'selected': isSelected(item)}">
-            {{item.font}}
+            {{item}}
           </div>
           <div
             class="ebook-popup-item-check"
             v-if="isSelected(item)">
-            <span class="icon-check"></span>
+            <span class="icon-check" v-show="!isLoadingFontFamily"></span>
+            <loading class="font-loading" v-show="isLoadingFontFamily"></loading>
           </div>
         </div>
       </div>
@@ -34,13 +35,23 @@
 
 <script>
 import { ebookMixin } from '../../utils/mixin'
-import { FONT_FAMILY } from '../../utils/book'
+import { FONT_FILE_LIST } from '../../utils/book'
 import { saveFontFamily } from '../../utils/localStorage'
+import Loading from '../common/Loading'
 export default {
   mixins: [ebookMixin],
+  components: {
+    Loading
+  },
   data() {
     return {
-      fontFamilyList: FONT_FAMILY
+      // fontFamilyList: FONT_FAMILY
+    }
+  },
+  computed: {
+    fontFamilyList() {
+      let fontNameList = ['Default'].concat(FONT_FILE_LIST.map(item => item.split('.')[0]))
+      return fontNameList
     }
   },
   methods: {
@@ -48,13 +59,21 @@ export default {
       this.setFontFamilyVisible(false)
     },
     isSelected(item) {
-      return this.defaultFontFamily === item.font
+      return this.defaultFontFamily === item
     },
-    setFontFamily(font) {
+    setFontFamily(font, index) {
       if (font === 'Default') {
         this.currentBook.rendition.themes.font('Arial')
       } else {
+        this.setIsLoadingFontFamily(true) // 字体加载中
         this.currentBook.rendition.themes.font(font)
+        // 判断加载是否完成
+        const fileName = FONT_FILE_LIST[index - 1]
+        const fontCss = new window.FontFace(font, `url(${process.env.VUE_APP_RES_URL}/fonts/${fileName})`)
+        document.fonts.add(fontCss)
+        fontCss.load().then(info => {
+          this.setIsLoadingFontFamily(false) // 加载完成
+        })
       }
       saveFontFamily(this.fileName, font)
       this.setDefaultFontFamily(font)
@@ -108,10 +127,14 @@ export default {
         }
         .ebook-popup-item-check {
           flex: 1;
-          text-align: right;
+          @include right;
           font-size: px2rem(14);
           font-weight: bold;
           color: #346cb9;
+          .font-loading {
+            width: px2rem(14);
+            height: px2rem(14);
+          }
         }
       }
     }

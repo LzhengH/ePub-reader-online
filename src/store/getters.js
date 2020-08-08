@@ -5,6 +5,7 @@ const book = {
   defaultFontSize: state => state.book.defaultFontSize,
   defaultFontFamily: state => state.book.defaultFontFamily,
   fontFamilyVisible: state => state.book.fontFamilyVisible,
+  isLoadingFontFamily: state => state.book.isLoadingFontFamily,
   defaultTheme: state => state.book.defaultTheme,
   bookAvailable: state => state.book.bookAvailable,
   progress: state => state.book.progress,

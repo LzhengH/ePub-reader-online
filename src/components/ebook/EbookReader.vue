@@ -125,6 +125,16 @@
         } else {
           this.rendition.themes.font(font)
           this.setDefaultFontFamily(font)
+          // 做字体加载loading动画
+          const fileName = this.fontFileList.filter(item => item.includes(font)).toString()
+          if (fileName) {
+            this.setIsLoadingFontFamily(true)
+            const fontCss = new window.FontFace(font, `url(${process.env.VUE_APP_RES_URL}/fonts/${fileName})`)
+            document.fonts.add(fontCss)
+            fontCss.load().then(info => {
+              this.setIsLoadingFontFamily(false)
+            })
+          }
         }
       },
       reloadCurrentBook(dbName, objectStoreName, key) {

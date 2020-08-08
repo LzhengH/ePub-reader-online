@@ -5,6 +5,7 @@ const book = {
     settingVisible: -1, // 二级菜单显示设置： -1不显示、0字号、1主题、2进度、3目录
     defaultFontSize: 16, // 阅读器字号
     defaultFontFamily: 'Default', // 字体
+    isLoadingFontFamily: false, // 是否在加载字体
     fontFamilyVisible: false, // 是否显示字体选择弹窗
     defaultTheme: 'Default', // 主题
     bookAvailable: false, // 章节进度条是否可用
@@ -36,6 +37,9 @@ const book = {
     },
     SET_DEFAULT_FONT_FAMILY: (state, font) => {
       state.defaultFontFamily = font
+    },
+    SET_IS_LOADING_FONT_FAMILY: (state, isLoadingFontFamily) => {
+      state.isLoadingFontFamily = isLoadingFontFamily
     },
     SET_FONT_FAMILY_VISIBLE: (state, visible) => {
       state.fontFamilyVisible = visible
@@ -101,6 +105,9 @@ const book = {
     },
     setDefaultFontFamily: ({ commit }, font) => {
       return commit('SET_DEFAULT_FONT_FAMILY', font)
+    },
+    setIsLoadingFontFamily: ({ commit }, isLoadingFontFamily) => {
+      return commit('SET_IS_LOADING_FONT_FAMILY', isLoadingFontFamily)
     },
     setDefaultTheme: ({ commit }, theme) => {
       return commit('SET_DEFAULT_THEME', theme)

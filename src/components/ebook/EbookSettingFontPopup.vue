@@ -63,6 +63,7 @@ export default {
     },
     setFontFamily(font, index) {
       if (font === 'Default') {
+        this.setIsLoadingFontFamily(false)
         this.currentBook.rendition.themes.font('Arial')
       } else {
         this.setIsLoadingFontFamily(true) // 字体加载中

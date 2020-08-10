@@ -9,7 +9,8 @@
   export default {
     data() {
       return {
-        fontFileList: FONT_FILE_LIST // 字体实体文件名列表
+        fontFileList: FONT_FILE_LIST, // 字体实体文件名列表
+        themeList: ['default', 'eye', 'gold', 'night'] // 主题文件名
       }
     },
     methods: {
@@ -26,7 +27,7 @@
           }
         }
       },
-      colseIndexedDB() {
+      closeIndexedDB() {
         this.db.close()
       },
       prefetchFonts() { // 预加载字体资源文件
@@ -38,14 +39,24 @@
           link.href = `${process.env.VUE_APP_RES_URL}/fonts/${item}`
           head.appendChild(link)
         })
+      },
+      prefetchTheme() { // 预加载主题文件
+        const head = document.getElementsByTagName('head')[0]
+        this.themeList.forEach(item => {
+          const link = document.createElement('link')
+          link.rel = 'prefetch'
+          link.href = `${process.env.VUE_APP_RES_URL}/theme/theme_${item}.css`
+          head.appendChild(link)
+        })
       }
     },
     created() {
       this.openIndexedDB('bookDB', 1)
       this.prefetchFonts()
+      this.prefetchTheme()
     },
     destroyed() {
-      this.colseIndexedDB()
+      this.closeIndexedDB()
     }
   }
   // rem计算

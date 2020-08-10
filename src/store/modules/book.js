@@ -12,15 +12,13 @@ const book = {
     progress: 0, // 章节进度条的百分比进度
     section: 0, // 当前章节
     sectionOffset: 0, // 章节对应目录下标的偏移量
-    isPaginating: true,
     currentBook: null, // 当前的电子书book实例
     navigation: null, // 目录数组
     cover: null, // 电子书封面路径
     metadata: null, // 电子书相关信息
-    paginate: '',
-    pagelist: null,
+    isTips: -1, // 提示弹窗显示: -1不显示、0提示、1警告
+    tipsContent: '', // 提示弹窗内容
     offsetY: 0, // 向下拉偏移量
-    isBookmark: null
   },
   mutations: {
     SET_FILENAME: (state, fileName) => {
@@ -59,9 +57,6 @@ const book = {
     SET_SECTIONOFFSET: (state, sectionOffset) => {
       state.sectionOffset = sectionOffset
     },
-    SET_IS_PAGINATING: (state, isPaginating) => {
-      state.isPaginating = isPaginating
-    },
     SET_CURRENT_BOOK: (state, currentBook) => {
       state.currentBook = currentBook
     },
@@ -74,18 +69,15 @@ const book = {
     SET_METADATA: (state, metadata) => {
       state.metadata = metadata
     },
-    SET_PAGINATE: (state, paginate) => {
-      state.paginate = paginate
+    SET_IS_TIPS: (state, isTips) => {
+      state.isTips = isTips
     },
-    SET_PAGELIST: (state, pagelist) => {
-      state.pagelist = pagelist
+    SET_TIPS_CONTENT: (state, tipsContent) => {
+      state.tipsContent = tipsContent
     },
     SET_OFFSETY: (state, offsetY) => {
       state.offsetY = offsetY
     },
-    SET_IS_BOOKMARK: (state, isBookmark) => {
-      state.isBookmark = isBookmark
-    }
   },
   actions: {
     setFileName: ({ commit }, fileName) => {
@@ -124,9 +116,6 @@ const book = {
     setSectionOffset: ({ commit }, sectionOffset) => {
       return commit('SET_SECTIONOFFSET', sectionOffset)
     },
-    setIsPaginating: ({ commit }, isPaginating) => {
-      return commit('SET_IS_PAGINATING', isPaginating)
-    },
     setCurrentBook: ({ commit }, book) => {
       return commit('SET_CURRENT_BOOK', book)
     },
@@ -139,38 +128,14 @@ const book = {
     setMetadata: ({ commit }, metadata) => {
       return commit('SET_METADATA', metadata)
     },
-    setPaginate: ({ commit }, paginate) => {
-      return commit('SET_PAGINATE', paginate)
-    },
-    setPagelist: ({ commit }, pagelist) => {
-      return commit('SET_PAGELIST', pagelist)
-    },
-    setIsBookmark({ commit }, isBookmark) {
-      return commit('SET_IS_BOOKMARK', isBookmark)
-    },
     setOffsetY({ commit }, offsetY) {
       return commit('SET_OFFSETY', offsetY)
     },
-    setHotSearchOffsetY({ commit }, offsetY) {
-      return commit('SET_HOT_SEARCH_OFFSETY', offsetY)
+    setIsTips({ commit }, isTips) {
+      return commit('SET_IS_TIPS', isTips)
     },
-    setFlapCardVisible({ commit }, flapCardVisible) {
-      return commit('SET_FLAP_CARD_VISIBLE', flapCardVisible)
-    },
-    setIsEditMode({ commit }, isEditMode) {
-      return commit('SET_IS_EDIT_MODE', isEditMode)
-    },
-    setShelfList({ commit }, list) {
-      return commit('SET_SHELF_LIST', list)
-    },
-    setShelfSelected({ commit }, selected) {
-      return commit('SET_SHELF_SELECTED', selected)
-    },
-    setShelfTitleVisible({ commit }, visible) {
-      return commit('SET_SHELF_TITLE_VISIBLE', visible)
-    },
-    setShelfCategory({ commit }, category) {
-      return commit('SET_SHELF_CATEGORY', category)
+    setTipsContent({ commit }, tipsContent) {
+      return commit('SET_TIPS_CONTENT', tipsContent)
     },
     setCurrentType({ commit }, type) {
       return commit('SET_CURRENT_TYPE', type)

@@ -1,24 +1,9 @@
 const messages = {
   home: {
-    title: 'epub e-book online reader',
-    select: 'Click here to select the epub file',
-    hint: 'Computer Science And Software Engineering',
-    guessYouLike: 'Guess You Like',
-    change: 'Change',
-    clear: 'Clear',
-    hotSearch: 'Hot Search',
-    historySearch: 'History Search',
-    sameAuthor: 'Same author with $1',
-    sameReader: 'Same reader with $1',
-    readPercent: '$1 is reading $2',
-    recommend: 'Recommend',
-    seeAll: 'See all',
-    readers: '$1 is reading',
-    featured: 'Featured',
-    category: 'Category',
-    books: 'books',
-    readNow: 'Read Now',
-    allBook: '$1 books'
+    title: 'ePub e-book online reader',
+    select: 'Click here to select the ePub file',
+    selectTip: 'Please select a file of type ePub',
+    selectWarning: 'The ePub file could not be parsed, possibly due to a nonstandard file'
   },
   detail: {
     copyright: 'Copyright',
@@ -34,9 +19,8 @@ const messages = {
     more: 'more',
     loading: 'Loading...',
     read: 'Read',
-    listen: 'Listen',
-    addOrRemoveShelf: 'Add to Book Shelf',
-    isAddedToShelf: 'Added to BookShelf'
+    tips: 'Tips',
+    warning: 'warning'
   },
   book: {
     pulldownAddMark: 'Pull down to add bookmark',

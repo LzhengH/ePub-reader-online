@@ -171,15 +171,19 @@ export default {
       this.$router.push(`/book/${this.fileName}`)
     },
     fileUpload(e) {
-      this.flag = false // 标记位,置为false
       let file = e.target.files[0]
       let fileReader = new FileReader()
       if (/\/epub/.test(file.type)) {
         fileReader.readAsArrayBuffer(file)
-        fileReader.onload = fileReaderEvent => { // 有问题
+        fileReader.onload = fileReaderEvent => { // 文件加载成功
           const bookData = fileReaderEvent.target.result
           this.book = new Epub()
-          this.book.open(bookData)
+          this.book.open(bookData).then(() => { // 读取ePub文件成功
+            this.flag = false // 快速弹回'上次阅读'的标记位,置为false
+          }).catch(() => { // 读取ePub文件失败
+            this.setIsTips(1)
+            this.setTipsContent(this.$t('home.selectWarning'))
+          })
           this.bookData = bookData
           this.setFileName(file.name)
           this.setCurrentBook(this.book)
@@ -201,8 +205,9 @@ export default {
             this.uploadMetadata = true
           })
         }
-      } else {
-        alert('请选择epub类型的文件')
+      } else { // 读取文件类型不为ePub
+        this.setIsTips(0)
+        this.setTipsContent(this.$t('home.selectTip'))
       }
     },
     loadedConfirm() {

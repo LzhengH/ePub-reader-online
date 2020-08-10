@@ -1,8 +1,9 @@
 <template>
   <div class="home" @click="hideMore()">
-    <div class="home-title-wrapper">
+    <!-- 遮罩层弹窗 -->
+    <popup v-if="isTips >= 0"></popup>
+    <header class="home-title-wrapper">
       <div class="left">
-        <h1 style="display: none">epub电子书在线阅读器</h1>
         {{title}}
       </div>
       <div class="right">
@@ -24,7 +25,7 @@
           </transition>
         </div>
       </div>
-    </div>
+    </header>
     <div class="home-content-wrapper">
       <home-uploader>
       </home-uploader>
@@ -35,17 +36,20 @@
 <script>
   import { saveLocale } from '../utils/localStorage'
   import HomeUploader from '../components/home/HomeUploader'
+  import Popup from '../components/common/Popup'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'Home',
     components: {
-      HomeUploader
+      HomeUploader,
+      Popup
     },
     data() {
       return {
         title: this.$t('home.title'),
         moreText: this.$t('detail.more'),
         selectMore: false,
-        more: [
+        more: [ // '更多'弹窗的列表项
           {
             key: this.$t('detail.lang'),
             value: this.$t('detail.currentLang'),
@@ -53,6 +57,11 @@
           }
         ]
       }
+    },
+    computed: {
+      ...mapGetters([
+        'isTips'
+      ])
     },
     methods: {
       toggleMore() {
@@ -85,6 +94,7 @@
 <style lang="scss" scoped>
 @import '../assets/styles/mixin.scss';
 .home {
+  position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;

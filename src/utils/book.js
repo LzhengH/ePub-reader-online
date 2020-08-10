@@ -6,7 +6,9 @@ export const FONT_SIZE_LIST = [
   { fontSize: 18 },
   { fontSize: 20 },
   { fontSize: 22 },
-  { fontSize: 24 }
+  { fontSize: 24 },
+  { fontSize: 26 },
+  { fontSize: 28 },
 ]
 export const FONT_FILE_LIST = ['方正楷体.ttf', '方正书宋.ttf',
   'cabin.woff2', 'daysOne.woff2', 'montserrat.woff2', 'tangerine.woff2',

@@ -4,6 +4,6 @@ export function px2rem(px) {
 }
 
 export function realPx(px) {
-  const maxWidth = window.innerWidth > 500 ? 500 : window.innerWidth
+  const maxWidth = window.innerWidth > 600 ? 600 : window.innerWidth
   return px * (maxWidth / 375)
 }

@@ -1,24 +1,9 @@
 const messages = {
   home: {
-    title: 'epub电子书在线阅读器',
-    select: '点击此处选择epub文件',
-    hint: '计算机科学和软件工程',
-    guessYouLike: '猜你喜欢',
-    change: '换一批',
-    clear: '清空',
-    hotSearch: '热门搜索',
-    historySearch: '搜索历史',
-    sameAuthor: '与$1同作者',
-    sameReader: '对$1感兴趣的人也在读',
-    readPercent: '阅读$2的人，$1都在读',
-    recommend: '热门推荐',
-    seeAll: '查看全部',
-    readers: '$1人同时在读',
-    featured: '精选',
-    category: '分类',
-    books: '本书',
-    readNow: '立即阅读',
-    allBook: '共 $1 本图书'
+    title: 'ePub电子书在线阅读器',
+    select: '点击此处选择ePub文件',
+    selectTip: '请选择ePub类型的文件',
+    selectWarning: '无法解析此ePub文件,可能是文件不规范造成的'
   },
   detail: {
     copyright: '版权',
@@ -34,9 +19,8 @@ const messages = {
     loading: '加载中...',
     more: '更多',
     read: '阅读',
-    listen: '听书',
-    addOrRemoveShelf: '加入书架',
-    isAddedToShelf: '已加入书架'
+    tips: '提示',
+    warning: '警告'
   },
   book: {
     pulldownAddMark: '下拉添加书签',

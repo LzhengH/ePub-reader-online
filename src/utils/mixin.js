@@ -83,10 +83,18 @@ export const ebookMixin = {
         saveLocation(this.fileName, startCfi)
       }
       // 由于每本书分页情况不同会有目录和section对不上的情况，这里进行偏移量判断
-      if (this.sectionOffset == null) {
-        for (let i = -5; i <= 5; i++) { // 一般上下浮动5以内
+      if (this.sectionOffset == null || (currentLocation.start && this.navigation[this.section + this.sectionOffset] && this.navigation[this.section + this.sectionOffset].href !== currentLocation.start.href)) {
+        for (let i = -10; i <= 10; i++) { // 一般上下浮动10以内
           if (this.navigation[this.section + i] && currentLocation.start) {
-            if (this.navigation[this.section + i].href === currentLocation.start.href) {
+            let navHref = this.navigation[this.section + i].href
+            let curHref = currentLocation.start.href
+            if (navHref.includes('#')) { // 有的带#号要删除才能判断
+              navHref = navHref.split('#')[0]
+            }
+            if (curHref.includes('#')) {
+              curHref = curHref.split('#')[0]
+            }
+            if (navHref === curHref) {
               this.setSectionOffset(i) // 保存偏移量到vuex
               break
             }

@@ -71,7 +71,6 @@ export default {
         // 判断加载是否完成
         const fileName = FONT_FILE_LIST[index - 1]
         const fontCss = new window.FontFace(font, `url(${process.env.VUE_APP_RES_URL}/fonts/${fileName})`)
-        document.fonts.add(fontCss)
         fontCss.load().then(info => {
           this.setIsLoadingFontFamily(false) // 加载完成
         })

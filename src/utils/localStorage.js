@@ -116,12 +116,12 @@ export function saveFontFamily(fileName, fontFamily) {
   setBookObject(fileName, 'fontFamily', fontFamily)
 }
 
-export function getTheme(fileName) {
-  return getBookObject(fileName, 'theme')
+export function getTheme() {
+  return getBookObject('theme')
 }
 
-export function saveTheme(fileName, theme) {
-  setBookObject(fileName, 'theme', theme)
+export function saveTheme(theme) {
+  setBookObject('theme', theme)
 }
 
 export function getFontSize(fileName) {

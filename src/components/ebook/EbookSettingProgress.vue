@@ -60,15 +60,14 @@ export default {
     onProgressChange(progress) {
       this.setProgress(progress).then(() => {
         this.displayProgress()
-        // this.updateProgressBg()
       })
     },
     onProgressInput(progress) {
       this.setProgress(progress)
-      // this.updateProgressBg()
     },
     displayProgress() { // 按照页数渲染
       const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
+      console.log(cfi)
       this.display(cfi)
     },
     updateProgressBg() {

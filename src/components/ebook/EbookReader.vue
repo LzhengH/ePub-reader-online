@@ -98,10 +98,10 @@
         this.setFontFamilyVisible(false)
       },
       initTheme() {
-        let defaultTheme = getTheme(this.fileName)
+        let defaultTheme = getTheme()
         if (!defaultTheme) {
           defaultTheme = this.themeList[0].name
-          saveTheme(this.fileName, defaultTheme)
+          saveTheme(defaultTheme)
         }
         this.setDefaultTheme(defaultTheme)
         this.themeList.forEach(theme => {
@@ -112,7 +112,8 @@
       initFontSize() {
         let fontSize = getFontSize(this.fileName)
         if (!fontSize) {
-          saveFontSize(this.fileName, this.defaultFontSize)
+          saveFontSize(this.fileName, 16)
+          this.setDefaultFontSize(16)
         } else {
           this.rendition.themes.fontSize(fontSize + 'px')
           this.setDefaultFontSize(fontSize)
@@ -121,7 +122,8 @@
       initFontFamily() {
         let font = getFontFamily(this.fileName)
         if (!font) {
-          saveFontFamily(this.fileName, this.defaultFontFamily)
+          saveFontFamily(this.fileName, 'Default')
+          this.setDefaultFontFamily('Default')
         } else {
           this.rendition.themes.font(font)
           this.setDefaultFontFamily(font)
@@ -130,7 +132,6 @@
           if (fileName) {
             this.setIsLoadingFontFamily(true)
             const fontCss = new window.FontFace(font, `url(${process.env.VUE_APP_RES_URL}/fonts/${fileName})`)
-            document.fonts.add(fontCss)
             fontCss.load().then(info => {
               this.setIsLoadingFontFamily(false)
             })
@@ -167,16 +168,11 @@
           method: 'default'
         })
         this.rendition.themes.font('Arial')
-        // 获取保存的当前阅读记录并渲染
-        const location = getLocation(this.fileName) || null
-        this.display(location, () => {
-          this.isBookShow = true // 显示书籍
-          // 将localStorage里的数据初始化到vuex中
-          this.initTheme()
-          this.initFontSize()
-          this.initFontFamily()
-          this.initGlobalStyle()
-        })
+        // 将localStorage里的数据初始化到vuex中
+        this.initTheme()
+        this.initFontSize()
+        this.initFontFamily()
+        this.initGlobalStyle()
         // 让rendition加载字体css(必须使用url的方式)
         this.rendition.hooks.content.register(contents => {
           this.fontFileList.forEach(item => {
@@ -248,9 +244,9 @@
         this.parseBook() // 解析电子书
         this.book.ready.then(() => { // 将书籍分页
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16)).then(locations => {
-            // console.log(locations)
-            this.refreshLocation() // 分页之后要重新刷新当前章节的进度
+            this.display(getLocation(this.fileName) || null)
             this.setBookAvailable(true)
+            this.isBookShow = true // 显示书籍
           })
         })
       },
@@ -269,7 +265,7 @@
         this.initEpub()
       }
     },
-    destroyed() {
+    beforeDestroy() {
       this.hideTitleAndMenu() // 将开启的菜单关闭
     }
   }

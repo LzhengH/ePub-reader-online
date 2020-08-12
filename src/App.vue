@@ -45,7 +45,6 @@
         this.themeList.forEach(item => {
           const link = document.createElement('link')
           link.rel = 'prefetch'
-          link.rel = 'stylesheet'
           link.href = `${process.env.VUE_APP_RES_URL}/theme/theme_${item}.css`
           head.appendChild(link)
         })
